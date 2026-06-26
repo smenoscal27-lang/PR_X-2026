@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduQuest — App</title>
+  <meta name="description" content="EduQuest Bachillerato: plataforma educativa gamificada con arquitectura SPA profesional.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/app.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar" id="sidebar">
+    <a href="#/dashboard" class="sidebar-logo" data-route="dashboard">
+      <div class="sidebar-logo-icon">🎓</div>
+      <div class="sidebar-logo-text">
+        <span class="sidebar-logo-name">EduQuest</span>
+        <span class="sidebar-logo-sub">Bachillerato</span>
+      </div>
+    </a>
+
+    <a href="#/profile" class="sidebar-user" id="sidebar-user-link">
+      <div class="sidebar-user-avatar" id="sb-user-avatar">🧑‍💻</div>
+      <div>
+        <div class="sidebar-user-name" id="sb-user-name">Cargando...</div>
+        <div class="sidebar-user-level" id="sb-user-level">Nivel 1</div>
+      </div>
+      <div class="sidebar-user-xp" id="sb-user-xp">0 XP</div>
+    </a>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a href="#/dashboard" class="nav-item active" data-route="dashboard">
+        <span class="nav-item-icon"><i class="fas fa-home"></i></span> Dashboard
+      </a>
+
+      <div class="sidebar-section-label">Benchmark</div>
+      <a href="#/modes/duolingo" class="nav-item" data-route="modes/duolingo">
+        <span class="nav-item-icon">🦉</span> Ruta Duolingo
+      </a>
+      <a href="#/modes/quizlet" class="nav-item" data-route="modes/quizlet">
+        <span class="nav-item-icon">🃏</span> Modo Quizlet
+      </a>
+      <a href="#/modes/kahoot" class="nav-item" data-route="modes/kahoot">
+        <span class="nav-item-icon">⚡</span> Kahoot Rush
+      </a>
+
+      <div class="sidebar-section-label">Aprender</div>
+      <a href="subjects.html" class="nav-item">
+        <span class="nav-item-icon"><i class="fas fa-book"></i></span> Materias
+      </a>
+      <a href="#/ranking" class="nav-item" data-route="ranking">
+        <span class="nav-item-icon"><i class="fas fa-medal"></i></span> Ranking
+      </a>
+      <a href="achievements.html" class="nav-item">
+        <span class="nav-item-icon"><i class="fas fa-trophy"></i></span> Logros
+      </a>
+
+      <div class="sidebar-section-label">Sistema</div>
+      <a href="settings.html" class="nav-item">
+        <span class="nav-item-icon"><i class="fas fa-cog"></i></span> Configuración
+      </a>
+      <button class="nav-item" data-logout style="width:100%;text-align:left;background:none;border:none;cursor:pointer;color:inherit">
+        <span class="nav-item-icon"><i class="fas fa-sign-out-alt"></i></span> Cerrar Sesión
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-xp-section">
+        <div class="sidebar-xp-label">
+          <span class="sidebar-xp-text" id="sb-xp-text">Progreso al siguiente nivel</span>
+          <span class="sidebar-xp-val" id="sb-xp-val">0 XP</span>
+        </div>
+        <div class="sidebar-xp-track">
+          <div class="sidebar-xp-fill" id="sb-xp-fill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <main class="main-content" id="app-outlet"></main>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Core -->
+<script src="../js/config.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/core/event-bus.js"></script>
+<script src="../js/core/progression.js"></script>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/api.js"></script>
+<script src="../js/core/auth.js"></script>
+<!-- Services -->
+<script src="../js/gamification.js"></script>
+<script src="../js/ranking.js"></script>
+<script src="../js/quiz.js"></script>
+<script src="../js/ui.js"></script>
+<!-- Views -->
+<script src="../js/views/dashboard-view.js"></script>
+<script src="../js/views/ranking-view.js"></script>
+<script src="../js/views/duolingo-view.js"></script>
+<script src="../js/views/quizlet-view.js"></script>
+<script src="../js/views/kahoot-view.js"></script>
+<script src="../js/views/quiz-view.js"></script>
+<!-- Router -->
+<script src="../js/router.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const user = EQ_Auth.getUser();
+  if (!user) return;
+  EQ_UI.init(user);
+  EQ_Router.init('app-outlet');
+});
+</script>
+</body>
+</html>

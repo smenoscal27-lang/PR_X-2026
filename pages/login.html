@@ -1,0 +1,154 @@
+<!-- ── SHARED SIDEBAR PARTIAL (include via JS) ── -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión — EduQuest Bachillerato</title>
+  <meta name="description" content="Inicia sesión en EduQuest Bachillerato y continúa tu aventura educativa.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+  <div class="auth-page">
+    <!-- BG Orbs -->
+    <div class="hero-bg-orbs">
+      <div class="orb orb-1" style="opacity:0.2"></div>
+      <div class="orb orb-2" style="opacity:0.15"></div>
+    </div>
+
+    <div class="auth-card animate-scale-in">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <div class="landing-nav-logo-icon" style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:1.4rem">🎓</div>
+        <div>
+          <div style="font-family:var(--font-heading);font-size:1.2rem;font-weight:800;color:white">EduQuest</div>
+          <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);letter-spacing:0.08em;text-transform:uppercase">Bachillerato</div>
+        </div>
+      </div>
+
+      <h1 class="auth-title">¡Bienvenido de vuelta!</h1>
+      <p class="auth-subtitle">Inicia sesión para continuar tu aventura educativa.</p>
+
+      <form class="auth-form" id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="login-email">
+            <i class="fas fa-envelope" style="margin-right:6px"></i>Correo Electrónico
+          </label>
+          <input type="email" id="login-email" class="form-input" placeholder="tu@correo.com" autocomplete="email" required>
+          <span class="form-error" id="email-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-matricula">
+            <i class="fas fa-id-card" style="margin-right:6px"></i>Código de Matrícula
+          </label>
+          <input type="text" id="login-matricula" class="form-input" placeholder="Ej: ALUMNO-101" autocomplete="off" required>
+          <span class="form-error" id="matricula-error"></span>
+        </div>
+
+        <div style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:12px;padding:12px 14px;margin-bottom:4px;font-size:0.78rem;color:var(--text-secondary);line-height:1.5">
+          <strong>Cuentas de prueba:</strong><br>
+          Alumno → <code>alumno1@institucion.edu.ec</code> / <code>ALUMNO-101</code><br>
+          Profesor → <code>admin@institucion.edu.ec</code> / <code>ADMIN-001</code>
+        </div>
+
+        <div id="login-error" style="display:none" class="form-error" style="padding:12px;background:var(--danger-light);border-radius:var(--radius-md);text-align:center"></div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </button>
+      </form>
+
+      <div class="auth-divider">o</div>
+
+      <!-- Demo -->
+      <button class="btn btn-ghost btn-full" id="demo-btn" style="color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.12)">
+        <i class="fas fa-play-circle"></i> Entrar como Alumno Demo
+      </button>
+
+      <p class="auth-link">
+        ¿No tienes cuenta? <a href="register.html">Regístrate gratis 🚀</a>
+      </p>
+      <p class="auth-link" style="margin-top:8px">
+        <a href="../index.html" style="color:rgba(255,255,255,0.3)"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+      </p>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/core/event-bus.js"></script>
+  <script src="../js/core/progression.js"></script>
+  <script src="../js/core/storage.js"></script>
+  <script src="../js/core/api.js"></script>
+  <script src="../js/core/auth.js"></script>
+  <script src="../js/gamification.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      EQ_UI.loadTheme();
+
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn       = document.getElementById('login-btn');
+        const email     = document.getElementById('login-email').value;
+        const matricula = document.getElementById('login-matricula').value;
+        const errEl     = document.getElementById('login-error');
+
+        btn.classList.add('loading');
+        errEl.style.display = 'none';
+
+        const result = await EQ_Auth.loginApi(email, matricula);
+        btn.classList.remove('loading');
+
+        if (result.ok) {
+          const roleLabel = result.role === 'teacher' ? 'Profesor' : 'Estudiante';
+          EQ_UI.showToast({
+            type: 'success',
+            title: `¡Bienvenido, ${roleLabel}!`,
+            message: `Hola, ${result.user.name} 👋`,
+          });
+          setTimeout(() => { window.location.href = 'app.html'; }, 800);
+        } else {
+          errEl.textContent = result.error;
+          errEl.style.cssText = 'display:block;padding:12px;background:var(--danger-light);border-radius:12px;text-align:center;color:var(--danger);font-size:0.88rem;margin-top:4px';
+        }
+      });
+
+      document.getElementById('demo-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('demo-btn');
+        btn.classList.add('loading');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+
+        document.getElementById('login-email').value = 'alumno1@institucion.edu.ec';
+        document.getElementById('login-matricula').value = 'ALUMNO-101';
+
+        const result = await EQ_Auth.loginApi('alumno1@institucion.edu.ec', 'ALUMNO-101');
+        btn.classList.remove('loading');
+        btn.innerHTML = '<i class="fas fa-play-circle"></i> Entrar como Alumno Demo';
+
+        if (result.ok) {
+          window.location.href = 'app.html';
+        } else {
+          document.getElementById('login-error').textContent = result.error;
+          document.getElementById('login-error').style.cssText = 'display:block;padding:12px;background:var(--danger-light);border-radius:12px;text-align:center;color:var(--danger);font-size:0.88rem;margin-top:4px';
+        }
+      });
+
+      ['login-email', 'login-matricula'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+          this.classList.remove('error');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
